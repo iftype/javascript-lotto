@@ -27,3 +27,6 @@
     fetch(link.href, fetchOpts);
   }
 })();
+const { Random } = MissionUtils;
+const randomPicker = (min, max) => Random.pickNumberInRange(min, max);
+console.log(randomPicker(1, 4));
