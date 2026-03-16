@@ -77,8 +77,8 @@ class LottoMachine {
     INVALID_UNIT: "구매 단위로 구매 가능합니다"
   };
   #picker;
-  constructor(picker) {
-    this.#picker = picker;
+  constructor(picker2) {
+    this.#picker = picker2;
   }
   buyLottos(money) {
     const amount = money.getAmount();
@@ -145,7 +145,7 @@ class Money {
   calculateProfitRate(totalPrize) {
     if (this.#amount === 0) return 0;
     const profitRate = totalPrize / this.#amount * 100;
-    return Number(profitRate.toFixed(1));
+    return profitRate.toFixed(1);
   }
   getAmount() {
     return this.#amount;
@@ -531,17 +531,19 @@ const LottoStatistics = ({ onRetry }) => {
     });
     $thead.append($headerRow);
     const $tbody = create("tbody", { className: "lotto-body" });
-    lottoResult.forEach(({ matchCount, hasBonus, count, prize }) => {
-      const $row = create("tr");
+    lottoResult.forEach(({ matchCount, hasBonus, count, prize, order }) => {
+      const $row = create("tr", { "data-rank": order });
       const matchText = hasBonus ? `${matchCount}개 + 보너스볼` : `${matchCount}개`;
       const prizeText = prize.toLocaleString();
       const countText = `${count}개`;
-      [matchText, prizeText, countText].forEach((text) => {
-        $row.append(create("td", { text }));
-      });
+      const $matchTd = create("td", { text: matchText, "data-field": "match" });
+      const $prizeTd = create("td", { text: prizeText, "data-field": "prize" });
+      const $countTd = create("td", { text: countText, "data-field": "count" });
+      $row.append($matchTd, $prizeTd, $countTd);
       $tbody.append($row);
     });
     $table.append($thead, $tbody);
+    console.log(profitRate);
     const $profitRate = create("p", {
       text: `당신의 총 수익률은 ${profitRate}%입니다.`,
       className: "profit-rate"
@@ -606,7 +608,8 @@ const App = ($app2, { lottoFacade: lottoFacade2 }) => {
     modal.close();
   }
 };
-const lottoMachine = new LottoMachine(lottoPicker);
+const picker = window.__MOCK_PICKER__ || lottoPicker;
+const lottoMachine = new LottoMachine(picker);
 const purchaseUseCase = new PurchaseLottoUseCase(lottoMachine);
 const statisticsUseCase = new StatisticsUseCase();
 const lottoFacade = new LottoFacade({
