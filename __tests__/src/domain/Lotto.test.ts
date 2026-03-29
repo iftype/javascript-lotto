@@ -1,3 +1,4 @@
+import { describe, test, expect } from "vitest";
 import Lotto from "../../../src/domain/Lotto.js";
 
 describe("Lotto 생성 성공테스트", () => {

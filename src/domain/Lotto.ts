@@ -1,24 +1,24 @@
 export default class Lotto {
-  static POLICY = Object.freeze({
+  static readonly POLICY = Object.freeze({
     MIN_RANGE: 1,
     MAX_RANGE: 45,
     SIZE: 6,
-  });
+  } as const);
 
-  static ERROR = Object.freeze({
+  static readonly ERROR = Object.freeze({
     DUPLICATE: "로또번호가 중복됐습니다",
     INVALID_RANGE: `로또번호가 ${Lotto.POLICY.MIN_RANGE}~${Lotto.POLICY.MAX_RANGE} 범위를 벗어났습니다`,
     INVALID_SIZE: `로또 갯수는 ${Lotto.POLICY.SIZE}개여야 합니다`,
-  });
+  } as const);
 
-  #numbers;
+  readonly #numbers: number[];
 
-  constructor(numbers) {
+  constructor(numbers: number[]) {
     Lotto.validate(numbers);
     this.#numbers = numbers;
   }
 
-  static validate(numbers) {
+  static validate(numbers: number[]): void {
     const { SIZE, MIN_RANGE, MAX_RANGE } = Lotto.POLICY;
     if (numbers.length !== SIZE) {
       throw new Error(Lotto.ERROR.INVALID_SIZE);
@@ -31,15 +31,15 @@ export default class Lotto {
     }
   }
 
-  hasNumber(number) {
+  hasNumber(number: number): boolean {
     return this.#numbers.includes(number);
   }
 
-  getNumbers() {
+  getNumbers(): number[] {
     return [...this.#numbers];
   }
 
-  static fromList(numbersList) {
+  static fromList(numbersList: number[][]): Lotto[] {
     return numbersList.map((numbers) => new Lotto(numbers));
   }
 }
